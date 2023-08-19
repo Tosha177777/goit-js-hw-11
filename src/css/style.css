@@ -1,0 +1,27 @@
+.load-more {
+  display: none;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #d0f8ef;
+  padding: 20px;
+  position: fixed;
+  width: 100%;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+.photo-window {
+  overflow: hidden;
+  width: 360px;
+  height: 220px;
+}
