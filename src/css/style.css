@@ -1,6 +1,96 @@
+a {
+  color: black;
+  text-decoration: none;
+}
+
+/*start region Btns */
 .load-more {
   display: none;
+  text-decoration: none;
+  padding: 12px 20px;
+  margin: 10px 20px;
+  border-radius: 30px;
+  background-image: linear-gradient(
+    45deg,
+    #6ab1d7 0%,
+    #33d9de 50%,
+    #002878 100%
+  );
+  background-position: 100% 0;
+  background-size: 200% 200%;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  color: white;
+  border: none;
+  box-shadow: 0 16px 32px 0 rgba(0, 40, 120, 0.35);
+  transition: 0.5s;
+
+  margin-right: auto;
+  margin-left: auto;
 }
+.load-more:hover {
+  box-shadow: 0 0 0 0 rgba(0, 40, 120, 0);
+  background-position: 0 0;
+}
+
+.search {
+  display: flex;
+}
+
+@keyframes slideme {
+  0% {
+    left: -30px;
+    margin-left: 0px;
+  }
+  30% {
+    left: 110%;
+    margin-left: 80px;
+  }
+  100% {
+    left: 110%;
+    margin-left: 80px;
+  }
+}
+
+.btn-new {
+  overflow: hidden;
+  position: relative;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  background: #4d5ae5;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  padding: 3px 10px;
+
+  box-shadow: none;
+
+  font-weight: var(--font-weight-medium);
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  letter-spacing: 0.04em;
+  color: #fcfcfc;
+}
+
+.btn-new:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -200px;
+  width: 60px;
+  height: 100px;
+  background-color: #fff;
+  filter: blur(30px);
+  transform: skewX(30deg) translateZ(0);
+  transition: 1s;
+  animation-name: slideme;
+  animation-duration: 3s;
+  animation-delay: 0.05s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+}
+/*end region Btns */
 
 .search-form {
   display: flex;
@@ -9,8 +99,28 @@
   justify-content: center;
   background-color: #d0f8ef;
   padding: 20px;
-  position: fixed;
   width: 100%;
+}
+
+.input {
+  border: none;
+  outline: 0;
+  border-radius: 30px;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.btn-search {
+  /* btns */
+}
+.btn-search:hover,
+.btn-search:active,
+.btn-search:focus {
+  background-color: var(--pressed-state);
+  border: 1px solid transparent;
+  box-shadow: 0px 3px 1px rgba(0, 0, 0, 0.1), 0px 2px 1px rgba(0, 0, 0, 0.08),
+    0px 2px 2px rgba(0, 0, 0, 0.12);
+  color: var(--header-team-card-background);
 }
 
 .gallery {
@@ -24,4 +134,14 @@
   overflow: hidden;
   width: 360px;
   height: 220px;
+}
+
+.info {
+  display: flex;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
 }

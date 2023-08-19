@@ -6,9 +6,16 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const form = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
 const loadBtn = document.querySelector('.load-more');
+const lightbox = new SimpleLightbox('.gallery a', {
+  captions: true,
+  captionPosition: 'bottom',
+  captionsData: 'alt',
+  captionDelay: 500,
+  animationSpeed: 500,
+  fadeSpeed: 1000,
+});
 let page = 1;
-let lastSearchQuery = '';
-
+const perPage = 50;
 form.addEventListener('submit', onSubmit);
 
 async function onSubmit(e) {
@@ -17,19 +24,16 @@ async function onSubmit(e) {
   if (inputValue === '') {
     return;
   }
-  lastSearchQuery = inputValue;
-
+  gallery.innerHTML = '';
+  page = 1;
   axiosPosts(inputValue);
+
   loadBtn.addEventListener('click', () => {
     axiosPosts(inputValue);
   });
 }
 
 async function axiosPosts(inputValue) {
-  if (inputValue !== lastSearchQuery) {
-    gallery.innerHTML = ''; // Видалити попередню розмітку
-    page = 1; // Обнулити значення сторінки
-  }
   const URL = 'https://pixabay.com/api/';
   const API_KEY = '38929728-c9c9689bf16ca978c8f2f11e7';
   const params = new URLSearchParams({
@@ -39,33 +43,37 @@ async function axiosPosts(inputValue) {
     orientation: 'horizontal',
     safesearch: true,
     page: page,
-    per_page: 40,
+    per_page: perPage,
   });
 
   try {
     const { data } = await axios.get(`${URL}?key=${API_KEY}&${params}`);
     const { hits } = data;
+    const { totalHits } = data;
+    console.log(totalHits);
+    const totalPages = totalHits / perPage;
+
     if (hits.length === 0) {
+      loadBtn.style.display = 'none';
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
       return;
     }
-    gallery.insertAdjacentHTML('beforeend', addMarkup({ hits }));
     loadBtn.style.display = 'block';
+    gallery.insertAdjacentHTML('beforeend', addMarkup({ hits }));
 
-    const lightbox = new SimpleLightbox('.gallery a', {
-      captions: true,
-      captionPosition: 'bottom',
-      captionsData: 'alt',
-      captionDelay: 500,
-      animationSpeed: 500,
-      fadeSpeed: 1000,
-    });
     lightbox.refresh();
     page += 1;
+    if (page > totalPages) {
+      loadBtn.style.display = 'none';
+      Notiflix.Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
+      return;
+    }
   } catch (error) {
-    Notiflix.Notify.failure(error.message);
+    Notiflix.Notify.failure(error);
   }
 }
 
