@@ -17,8 +17,58 @@ async function onSubmit(e) {
   if (inputValue === '') {
     return;
   }
+  lastSearchQuery = inputValue;
+
   axiosPosts(inputValue);
+  loadBtn.addEventListener('click', () => {
+    axiosPosts(inputValue);
+  });
 }
+
+async function axiosPosts(inputValue) {
+  if (inputValue !== lastSearchQuery) {
+    gallery.innerHTML = ''; // Видалити попередню розмітку
+    page = 1; // Обнулити значення сторінки
+  }
+  const URL = 'https://pixabay.com/api/';
+  const API_KEY = '38929728-c9c9689bf16ca978c8f2f11e7';
+  const params = new URLSearchParams({
+    key: API_KEY,
+    q: inputValue,
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: true,
+    page: page,
+    per_page: 40,
+  });
+
+  try {
+    const { data } = await axios.get(`${URL}?key=${API_KEY}&${params}`);
+    const { hits } = data;
+    if (hits.length === 0) {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      return;
+    }
+    gallery.insertAdjacentHTML('beforeend', addMarkup({ hits }));
+    loadBtn.style.display = 'block';
+
+    const lightbox = new SimpleLightbox('.gallery a', {
+      captions: true,
+      captionPosition: 'bottom',
+      captionsData: 'alt',
+      captionDelay: 500,
+      animationSpeed: 500,
+      fadeSpeed: 1000,
+    });
+    lightbox.refresh();
+    page += 1;
+  } catch (error) {
+    Notiflix.Notify.failure(error.message);
+  }
+}
+
 function addMarkup({ hits }) {
   const markup = hits
     .map(
@@ -56,50 +106,4 @@ function addMarkup({ hits }) {
     )
     .join('');
   return markup;
-}
-
-async function axiosPosts(inputValue) {
-  if (inputValue !== lastSearchQuery) {
-    gallery.innerHTML = ''; // Видалити попередню розмітку
-    page = 1; // Обнулити значення сторінки
-  }
-
-  const URL = 'https://pixabay.com/api/';
-  const API_KEY = '38929728-c9c9689bf16ca978c8f2f11e7';
-  const params = new URLSearchParams({
-    key: API_KEY,
-    q: inputValue,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    page: page,
-    per_page: 40,
-  });
-  page += 1;
-  try {
-    const { data } = await axios.get(`${URL}?key=${API_KEY}&${params}`);
-    const { hits } = data;
-    if (hits.length === 0) {
-      Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-      return;
-    }
-    gallery.insertAdjacentHTML('beforeend', addMarkup({ hits }));
-    loadBtn.style.display = 'block';
-    loadBtn.addEventListener('click', () => {
-      axiosPosts(inputValue);
-    });
-    const lightbox = new SimpleLightbox('.gallery a', {
-      captions: true,
-      captionPosition: 'bottom',
-      captionsData: 'alt',
-      captionDelay: 500,
-      animationSpeed: 500,
-      fadeSpeed: 1000,
-    });
-    lightbox.refresh();
-  } catch (error) {
-    Notiflix.Notify.failure(error.message);
-  }
 }
