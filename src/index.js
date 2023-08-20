@@ -15,12 +15,18 @@ const lightbox = new SimpleLightbox('.gallery a', {
   fadeSpeed: 1000,
 });
 let page = 1;
-const perPage = 50;
+let inputValue = '';
+const perPage = 40;
+
 form.addEventListener('submit', onSubmit);
+
+loadBtn.addEventListener('click', () => {
+  axiosPosts(inputValue);
+});
 
 async function onSubmit(e) {
   e.preventDefault();
-  const inputValue = form.elements.searchQuery.value.trim();
+  inputValue = form.elements.searchQuery.value.trim();
   if (inputValue === '') {
     return;
   }
@@ -28,9 +34,7 @@ async function onSubmit(e) {
   page = 1;
   axiosPosts(inputValue);
 
-  loadBtn.addEventListener('click', () => {
-    axiosPosts(inputValue);
-  });
+  return inputValue;
 }
 
 async function axiosPosts(inputValue) {
@@ -45,9 +49,12 @@ async function axiosPosts(inputValue) {
     page: page,
     per_page: perPage,
   });
+  const { data } = await axios.get(`${URL}?key=${API_KEY}&${params}`);
+  workWithData({ data });
+}
 
+function workWithData({ data }) {
   try {
-    const { data } = await axios.get(`${URL}?key=${API_KEY}&${params}`);
     const { hits } = data;
     const { totalHits } = data;
     console.log(totalHits);
